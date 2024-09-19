@@ -6,7 +6,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-// pins
+// Pins
 #define OW_TEMP 13
 #define LAMP 25
 #define FAN 26
