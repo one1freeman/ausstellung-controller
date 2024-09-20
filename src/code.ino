@@ -259,6 +259,8 @@ void loop()
         {
           relay("fan", false);
         }
+
+        relay("lamp", false);
       }
       else
       { 
@@ -275,6 +277,8 @@ void loop()
         {
           relay("lamp", false);
         }
+
+        relay("fan", false);
       }
 
       // heat
