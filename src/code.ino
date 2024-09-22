@@ -94,6 +94,8 @@ void loop()
 {
   int weekday = RTC.getWeek();
   int day = RTC.getDay();
+  int month = RTC.getMonth();
+  int year = RTC.getYear();
   int hour = RTC.getHours();
   int minute = RTC.getMinutes();
   int second = RTC.getSeconds();
@@ -132,6 +134,12 @@ void loop()
           client.print(minute);
           client.print(":");
           client.println(second);
+          client.println("<br>");
+          client.print(day);
+          client.print(".");
+          client.print(month);
+          client.print(".");
+          client.println(year);
           client.println("<br>RSSI:");
           client.println(WiFi.RSSI());
           client.println(" dBm<br>Aktueller Modus: ");
