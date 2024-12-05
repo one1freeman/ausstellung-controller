@@ -85,7 +85,7 @@ void setup()
 
   mode = "Zeitgeschaltet";
 
-  display.println("BETA(Kein WLAN!) Zeitgeschaltet")
+  display.println("BETA(Kein WLAN!) Zeitgeschaltet");
   display.display();
 
   Serial.println("Setup finished at: ");
