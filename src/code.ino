@@ -1,5 +1,5 @@
 #include <SPI.h>
-#include <WiFi.h>
+//#include <WiFi.h>
 #include <Wire.h>
 #include <I2C_RTC.h>
 #include <OLED-Display-SOLDERED.h>
@@ -15,10 +15,10 @@
 #define TEMP_INSIDE 0
 #define TEMP_OUTSIDE 1
 
-String ssid = "FRITZ!Box 7490";
-String pass = "14460688476998183101";
+// String ssid = "FRITZ!Box 7490";
+// String pass = "14460688476998183101";
 
-WiFiServer server(80);
+// WiFiServer server(80);
 
 static DS1307 RTC;
 
@@ -61,29 +61,31 @@ void setup()
   pinMode(HEAT, OUTPUT);
 
   // attempt to connect to Wifi network:
-  WiFi.begin(ssid, pass);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    Serial.print(".");
-    if (WiFi.status() == WL_CONNECT_FAILED)
-    {
-      WiFi.begin(ssid, pass);
-      Serial.println(".");
-      Serial.print("Connection failed, retrying.");
-    }
-    delay(1000);
-  }
+  // WiFi.begin(ssid, pass);
+  // while (WiFi.status() != WL_CONNECTED)
+  // {
+  //   Serial.print(".");
+  //   if (WiFi.status() == WL_CONNECT_FAILED)
+  //   {
+  //     WiFi.begin(ssid, pass);
+  //     Serial.println(".");
+  //     Serial.print("Connection failed, retrying.");
+  //   }
+  //   delay(1000);
+  // }
 
   Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-  Serial.println("RSSI:");
-  Serial.println(WiFi.RSSI());
+  // Serial.println("WiFi connected");
+  // Serial.println("IP address: ");
+  // Serial.println(WiFi.localIP());
+  // Serial.println("RSSI:");
+  // Serial.println(WiFi.RSSI());
 
-  server.begin();
+  // server.begin();
 
   mode = "Zeitgeschaltet";
+
+  display.println("BETA(Kein WLAN!) Zeitgeschaltet")
 
   Serial.println("Setup finished at: ");
   printTime();
@@ -101,108 +103,108 @@ void loop()
   int second = RTC.getSeconds();
   // server handling
 
-  WiFiClient client = server.available();
-  if (client)
-  {
-    String time = RTC.getHours() + ":" + RTC.getMinutes();
-    Serial.println("new client");
+  // WiFiClient client = server.available();
+  // if (client)
+  // {
+  //   String time = RTC.getHours() + ":" + RTC.getMinutes();
+  //   Serial.println("new client");
 
-    bool currentLineBlank = true;
-    String currentLine = "";
+  //   bool currentLineBlank = true;
+  //   String currentLine = "";
 
-    while (client.connected())
-    {
+  //   while (client.connected())
+  //   {
 
-      if (client.available())
-      {
-        char c = client.read();
-        currentLine += c;
-        Serial.write(c);
+  //     if (client.available())
+  //     {
+  //       char c = client.read();
+  //       currentLine += c;
+  //       Serial.write(c);
 
-        if (c == '\n' && currentLineBlank)
-        {
-          client.println("HTTP/1.1 200 OK");
-          client.println("Content-Type:text/html");
-          client.println("Connection: close");
-          client.println();
-          client.println("<!DOCTYPE HTML>");
-          client.println("<html>");
-          client.println("<p style=\"font-family: arial; font-size:  20px\">");
-          client.println("");
-          client.print(hour);
-          client.print(":");
-          client.print(minute);
-          client.print(":");
-          client.println(second);
-          client.println("<br>");
-          client.print(day);
-          client.print(".");
-          client.print(month);
-          client.print(".");
-          client.println(year);
-          client.println("<br>RSSI:");
-          client.println(WiFi.RSSI());
-          client.println(" dBm<br>Aktueller Modus: ");
-          client.println(mode);
-          if (mode == "Zeitgeschaltet")
-          {
-            client.println("<br><a href=\"/an\"><button>An</button></a>");
-            client.println("<a href=\"/standby\"><button>Standby</button></a>");
-          }
-          else if (mode == "An")
-          {
-            client.println("<br><a href=\"/zeit\"><button>Zeitgeschaltet</button></a>");
-            client.println("<a href=\"/standby\"><button>Standby</button></a>");
-          }
-          else
-          {
-            client.println("<br><a href=\"/zeit\"><button>Zeitgeschaltet</button></a>");
-            client.println("<a href=\"/an\"><button>An</button></a>");
-          }
-          client.println("<br> Heute: ");
-          client.println(fanToday ? "Ventilator" : "Lampe");
-          client.println("<br>Lampe: ");
-          client.println(lamp ? "An" : "Aus");
-          client.println("<br>Ventilator: ");
-          client.println(fan ? "An" : "Aus");
-          client.println("<br>Waermepumpe: ");
-          client.println(heat ? "An" : "Aus");
-          client.println("</p>");
-          client.println("</html>");
-          client.println();
+  //       if (c == '\n' && currentLineBlank)
+  //       {
+  //         client.println("HTTP/1.1 200 OK");
+  //         client.println("Content-Type:text/html");
+  //         client.println("Connection: close");
+  //         client.println();
+  //         client.println("<!DOCTYPE HTML>");
+  //         client.println("<html>");
+  //         client.println("<p style=\"font-family: arial; font-size:  20px\">");
+  //         client.println("");
+  //         client.print(hour);
+  //         client.print(":");
+  //         client.print(minute);
+  //         client.print(":");
+  //         client.println(second);
+  //         client.println("<br>");
+  //         client.print(day);
+  //         client.print(".");
+  //         client.print(month);
+  //         client.print(".");
+  //         client.println(year);
+  //         client.println("<br>RSSI:");
+  //         client.println(WiFi.RSSI());
+  //         client.println(" dBm<br>Aktueller Modus: ");
+  //         client.println(mode);
+  //         if (mode == "Zeitgeschaltet")
+  //         {
+  //           client.println("<br><a href=\"/an\"><button>An</button></a>");
+  //           client.println("<a href=\"/standby\"><button>Standby</button></a>");
+  //         }
+  //         else if (mode == "An")
+  //         {
+  //           client.println("<br><a href=\"/zeit\"><button>Zeitgeschaltet</button></a>");
+  //           client.println("<a href=\"/standby\"><button>Standby</button></a>");
+  //         }
+  //         else
+  //         {
+  //           client.println("<br><a href=\"/zeit\"><button>Zeitgeschaltet</button></a>");
+  //           client.println("<a href=\"/an\"><button>An</button></a>");
+  //         }
+  //         client.println("<br> Heute: ");
+  //         client.println(fanToday ? "Ventilator" : "Lampe");
+  //         client.println("<br>Lampe: ");
+  //         client.println(lamp ? "An" : "Aus");
+  //         client.println("<br>Ventilator: ");
+  //         client.println(fan ? "An" : "Aus");
+  //         client.println("<br>Waermepumpe: ");
+  //         client.println(heat ? "An" : "Aus");
+  //         client.println("</p>");
+  //         client.println("</html>");
+  //         client.println();
 
-          break;
-        }
+  //         break;
+  //       }
 
-        if (currentLine.endsWith("GET /zeit"))
-        {
-          mode = "Zeitgeschaltet";
-        }
-        else if (currentLine.endsWith("GET /an"))
-        {
-          mode = "An";
-        }
-        else if (currentLine.endsWith("GET /standby"))
-        {
-          mode = "Standby";
-        }
+  //       if (currentLine.endsWith("GET /zeit"))
+  //       {
+  //         mode = "Zeitgeschaltet";
+  //       }
+  //       else if (currentLine.endsWith("GET /an"))
+  //       {
+  //         mode = "An";
+  //       }
+  //       else if (currentLine.endsWith("GET /standby"))
+  //       {
+  //         mode = "Standby";
+  //       }
 
-        if (c == '\n')
-        {
-          currentLineBlank = true;
-        }
-        else if (c != '\r')
-        {
-          currentLineBlank = false;
-        }
-      }
-    }
+  //       if (c == '\n')
+  //       {
+  //         currentLineBlank = true;
+  //       }
+  //       else if (c != '\r')
+  //       {
+  //         currentLineBlank = false;
+  //       }
+  //     }
+  //   }
 
-    delay(1);
-    client.stop();
-    Serial.println("client disconnected");
-    printTime();
-  }
+  //   delay(1);
+  //   client.stop();
+  //   Serial.println("client disconnected");
+  //   printTime();
+  // }
 
   // temp display
   if (mode != "Standby")
@@ -233,11 +235,11 @@ void loop()
 
   // Wifi reconnect
 
-  if (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_IDLE_STATUS)
-  {
-    Serial.println("Disconnected, attempting to reconnect");
-    WiFi.begin(ssid, pass);
-  }
+  // if (WiFi.status() != WL_CONNECTED && WiFi.status() != WL_IDLE_STATUS)
+  // {
+  //   Serial.println("Disconnected, attempting to reconnect");
+  //   WiFi.begin(ssid, pass);
+  // }
 
   if (day % 2 == 0)
   {
