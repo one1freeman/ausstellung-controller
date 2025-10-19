@@ -5,4 +5,4 @@
 
 // IDs
 #define TEMP_INSIDE 0
-#define TEMP_OUTSIDE 1
+#define TEMP_OUTSIDE 0

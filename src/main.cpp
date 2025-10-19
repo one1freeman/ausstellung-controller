@@ -84,7 +84,7 @@ void loop()
 
     display.setCursor(0, 20);
     display.print("OUT: ");
-    display.print(sensors.getTempCByIndex(TEMP_OUTSIDE));
+    display.print(tempIn);
 
     display.display();
   }

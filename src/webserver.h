@@ -9,6 +9,7 @@ WiFiServer server(80);
 void serverSetup() {
     Serial.println("Setting up AP...");
     WiFi.softAP(SSID, AP_PASSWORD);
+    WiFi.softAPsetHostname("MasterESP");
     Serial.print("SSID: ");
     Serial.println(SSID);
     Serial.print("IP: ");
@@ -49,9 +50,11 @@ void serverLoop()
                 else if (currentLine.endsWith("GET /standby"))
                 {
                     mode = "Standby";
-                } else if (currentLine.endsWith("POST /temp"))
+                } else if (currentLine.endsWith("$POST"))
                 {
                     tempConn = true;
+                    temperatureLine = currentLine.substring(0, currentLine.length() - 5);
+                    tempIn = temperatureLine.toFloat();
                 }
                 
 
@@ -100,15 +103,6 @@ void serverLoop()
                     client.println();
 
                     break;
-                } else if (tempConn)
-                {
-                    if (c == '\n')
-                    {
-                        tempConn = false;
-                    } else
-                    {
-                        temperatureLine += c;
-                    }
                 }
                 
                 if (c == '\n')
