@@ -26,6 +26,7 @@ void serverLoop()
         
         bool currentLineBlank = true;
         String currentLine = "";
+        String temperatureLine = "";
         
         while (client.connected())
         {
@@ -35,6 +36,7 @@ void serverLoop()
                 char c = client.read();
                 currentLine += c;
                 Serial.write(c);
+                bool tempConn = false;
 
                 if (currentLine.endsWith("GET /zeit"))
                 {
@@ -47,7 +49,11 @@ void serverLoop()
                 else if (currentLine.endsWith("GET /standby"))
                 {
                     mode = "Standby";
+                } else if (currentLine.endsWith("POST /temp"))
+                {
+                    tempConn = true;
                 }
+                
 
                 if (c == '\n' && currentLineBlank)
                 {
@@ -73,13 +79,13 @@ void serverLoop()
                     client.print(month);
                     client.print(".");
                     client.println(year);
-                    client.println(" dBm<br>Aktueller Modus: ");
+                    client.println("<br>Aktueller Modus: ");
                     client.println(mode);
                     client.println("<br>");
 
-                    client.println(mode == "Zeitgeschaltet" ? "" : "<a href=\"/an\"><button>Zeitgeschaltet</button></a><br>");
+                    client.println(mode == "Zeitgeschaltet" ? "" : "<a href=\"/zeitgeschaltet\"><button>Zeitgeschaltet</button></a><br>");
                     client.println(mode == "An" ? "" : "<a href=\"/an\"><button>An</button></a><br>");
-                    client.println(mode == "Standby" ? "" : "<a href=\"/an\"><button>Standby</button></a><br>");
+                    client.println(mode == "Standby" ? "" : "<a href=\"/standby\"><button>Standby</button></a><br>");
                 
                     client.println("<br> Heute: ");
                     client.println(fanToday ? "Ventilator" : "Lampe");
@@ -94,6 +100,15 @@ void serverLoop()
                     client.println();
 
                     break;
+                } else if (tempConn)
+                {
+                    if (c == '\n')
+                    {
+                        tempConn = false;
+                    } else
+                    {
+                        temperatureLine += c;
+                    }
                 }
                 
                 if (c == '\n')

@@ -1,3 +1,3 @@
-char *mode = "";
+String mode = "";
 
 bool fanToday, lamp, fan, heat, timer;

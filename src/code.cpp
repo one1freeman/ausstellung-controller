@@ -3,15 +3,29 @@
 #include <OLED-Display-SOLDERED.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#include "clock.h"
 #include "pins.h"
-#include "status.h"
 #include "webserver.h"
 
 OLED_Display display;
 
 OneWire tempWire(OW_TEMP);
 DallasTemperature sensors(&tempWire);
+
+void relay (String modul, bool modus) {
+  if (modul.equals("lamp"))
+  {
+    lamp = modus;
+    digitalWrite(LAMP, modus ? HIGH : LOW);
+  } else if (modul.equals("fan"))
+  {
+    fan = modus;
+    digitalWrite(FAN, modus ? HIGH : LOW);
+  } else if (modul.equals("heat"))
+  {
+    heat = modus;
+    digitalWrite(HEAT, modus ? HIGH : LOW);
+  }
+}
 
 void setup()
 {
@@ -23,7 +37,7 @@ void setup()
   RTC.begin();
 
   display.clearDisplay();
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
   display.println("Starting...");
@@ -37,13 +51,9 @@ void setup()
   pinMode(HEAT, OUTPUT);
 
   Serial.println("");
-  // Serial.println("WiFi connected");
-  // Serial.println("IP address: ");
-  // Serial.println(WiFi.localIP());
-  // Serial.println("RSSI:");
-  // Serial.println(WiFi.RSSI());
+  serverSetup();
 
-  // server.begin();
+  server.begin();
 
   mode = "Zeitgeschaltet";
 
@@ -69,14 +79,12 @@ void loop()
     display.clearDisplay();
 
     display.setCursor(0, 0);
-    display.print("Innen: ");
+    display.print("IN:  ");
     display.print(sensors.getTempCByIndex(TEMP_INSIDE));
-    display.print("C");
 
-    display.setCursor(0, 10);
-    display.print("Aussen: ");
+    display.setCursor(0, 20);
+    display.print("OUT: ");
     display.print(sensors.getTempCByIndex(TEMP_OUTSIDE));
-    display.print("C");
 
     display.display();
   }
@@ -183,20 +191,4 @@ void loop()
   }
 
   delay(50);
-}
-
-void relay (String modul, bool modus) {
-  if (modul.equals("lamp"))
-  {
-    lamp = modus;
-    digitalWrite(LAMP, modus ? HIGH : LOW);
-  } else if (modul.equals("fan"))
-  {
-    fan = modus;
-    digitalWrite(FAN, modus ? HIGH : LOW);
-  } else if (modul.equals("heat"))
-  {
-    heat = modus;
-    digitalWrite(HEAT, modus ? HIGH : LOW);
-  }
 }
