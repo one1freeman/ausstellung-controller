@@ -1,12 +1,12 @@
 #include <WiFi.h>
-#include <clock.h>
 // secret values for SSID/Password
 #include "credentials.h"
 #include "status.h"
 
 WiFiServer server(80);
 
-void serverSetup() {
+void serverSetup()
+{
     Serial.println("Setting up AP...");
     WiFi.softAP(SSID, AP_PASSWORD);
     WiFi.softAPsetHostname("MasterESP");
@@ -24,20 +24,17 @@ void serverLoop()
         String time = hour + ":" + minute;
         Serial.println("new client:");
         Serial.println(client.remoteIP());
-        
+
         bool currentLineBlank = true;
         String currentLine = "";
-        String temperatureLine = "";
-        
+
         while (client.connected())
         {
-            
             if (client.available())
             {
                 char c = client.read();
                 currentLine += c;
                 Serial.write(c);
-                bool tempConn = false;
 
                 if (currentLine.endsWith("GET /zeit"))
                 {
@@ -50,13 +47,14 @@ void serverLoop()
                 else if (currentLine.endsWith("GET /standby"))
                 {
                     mode = "Standby";
-                } else if (currentLine.endsWith("$POST"))
+                }
+                else if (currentLine.endsWith("$POST"))
                 {
-                    tempConn = true;
-                    temperatureLine = currentLine.substring(0, currentLine.length() - 5);
+                    String temperatureLine = currentLine.substring(0, currentLine.length() - 5); // cropping für die Daten vom Sensor-ESP: z.b. "27.5$POST" -> "27.5"
                     tempIn = temperatureLine.toFloat();
                 }
-                
+
+                statusControl();
 
                 if (c == '\n' && currentLineBlank)
                 {
@@ -86,10 +84,10 @@ void serverLoop()
                     client.println(mode);
                     client.println("<br>");
 
-                    client.println(mode == "Zeitgeschaltet" ? "" : "<a href=\"/zeitgeschaltet\"><button>Zeitgeschaltet</button></a><br>");
+                    client.println(mode == "Zeitgeschaltet" ? "" : "<a href=\"/zeit\"><button>Zeitgeschaltet</button></a><br>");
                     client.println(mode == "An" ? "" : "<a href=\"/an\"><button>An</button></a><br>");
                     client.println(mode == "Standby" ? "" : "<a href=\"/standby\"><button>Standby</button></a><br>");
-                
+
                     client.println("<br> Heute: ");
                     client.println(fanToday ? "Ventilator" : "Lampe");
                     client.println("<br>Lampe: ");
@@ -104,7 +102,7 @@ void serverLoop()
 
                     break;
                 }
-                
+
                 if (c == '\n')
                 {
                     currentLineBlank = true;
