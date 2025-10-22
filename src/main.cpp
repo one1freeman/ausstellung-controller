@@ -34,7 +34,7 @@ void setup()
 
   display.begin();
 
-  RTC.begin();
+  rtcSetup();
 
   display.clearDisplay();
   display.setTextSize(2);
@@ -68,6 +68,7 @@ void setup()
 
 void loop()
 {
+  rtcLoop();
   // server handling
   serverLoop();
 

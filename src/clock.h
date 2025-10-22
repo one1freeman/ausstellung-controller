@@ -1,6 +1,6 @@
-#include <I2C_RTC.h>
+#include <RTClib.h>
 
-static DS1307 RTC;
+RTC_DS3231 rtc;
 
 int weekday;
 int day;
@@ -10,26 +10,41 @@ int hour;
 int minute;
 int second;
 
-void rtcLoop() {
-    weekday = RTC.getWeek();
-    day = RTC.getDay();
-    month = RTC.getMonth();
-    year = RTC.getYear();
-    hour = RTC.getHours();
-    minute = RTC.getMinutes();
-    second = RTC.getSeconds();
+void rtcSetup()
+{
+  if (!rtc.begin())
+  {
+    Serial.println("Couldn't find RTC");
+    while (1)
+      delay(10);
+  }
+}
+
+void rtcLoop()
+{
+  DateTime now = rtc.now();
+
+  weekday = now.dayOfTheWeek();
+  day = now.day();
+  month = now.month();
+  year = now.year();
+  hour = now.hour();
+  minute = now.minute();
+  second = now.second();
 }
 
 void printTime()
 {
-  Serial.print(RTC.getHours());
-  Serial.print(":");
-  Serial.print(RTC.getMinutes());
-  Serial.print(":");
-  Serial.println(RTC.getSeconds());
-  Serial.print(RTC.getDay());
+  rtcLoop();
+  Serial.print(hour < 10 ? "0" : "");
+  Serial.print(hour);
+  Serial.print(minute < 10 ? ":0" : ":");
+  Serial.print(minute);
+  Serial.print(second < 10 ? ":0" : ":");
+  Serial.println(second);
+  Serial.print(day);
   Serial.print(".");
-  Serial.print(RTC.getMonth());
+  Serial.print(month);
   Serial.print(".");
-  Serial.println(RTC.getYear());
+  Serial.println(year);
 }
