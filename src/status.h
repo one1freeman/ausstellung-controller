@@ -1,4 +1,4 @@
-#include "clock.h";
+#include "clock.h"
 
 String mode = "";
 
@@ -25,7 +25,7 @@ void statusControl()
                          dayCorrect &&
                          mode == "Zeitgeschaltet";
 
-    fan = fanToday && (timetable || mode == "An");
-    lamp = !fanToday && (timetable || mode == "An");
+    fan = (fanToday && timetable) || mode == "An";
+    lamp = (!fanToday && timetable) || mode == "An";
     heat = timetableHeat || mode == "An";
 }

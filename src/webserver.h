@@ -8,12 +8,14 @@ WiFiServer server(80);
 void serverSetup()
 {
     Serial.println("Setting up AP...");
+    WiFi.mode(WIFI_AP);
     WiFi.softAP(SSID, AP_PASSWORD);
-    WiFi.softAPsetHostname("MasterESP");
+    delay(500);
     Serial.print("SSID: ");
     Serial.println(SSID);
     Serial.print("IP: ");
     Serial.println(WiFi.softAPIP());
+    server.begin();
 }
 
 void serverLoop()
@@ -21,7 +23,6 @@ void serverLoop()
     WiFiClient client = server.available();
     if (client)
     {
-        String time = hour + ":" + minute;
         Serial.println("new client:");
         Serial.println(client.remoteIP());
 
@@ -54,10 +55,11 @@ void serverLoop()
                     tempIn = temperatureLine.toFloat();
                 }
 
-                statusControl();
+                //statusControl();
 
                 if (c == '\n' && currentLineBlank)
                 {
+                    Serial.println("Sending answer!");
                     client.println("HTTP/1.1 200 OK");
                     client.println("Content-Type:text/html");
                     client.println("Connection: close");

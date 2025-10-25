@@ -1,4 +1,4 @@
-#define OW_TEMP 4
+#define TEMPERATURE 4
 #define LAMP 25
 #define FAN 26
 #define HEAT 27

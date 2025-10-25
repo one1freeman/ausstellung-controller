@@ -1,15 +1,13 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <OLED-Display-SOLDERED.h>
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <DHT.h>
 #include "pins.h"
 #include "webserver.h"
 
 OLED_Display display;
 
-OneWire tempWire(OW_TEMP);
-DallasTemperature sensors(&tempWire);
+DHT tempSensor(TEMPERATURE, DHT11);
 
 unsigned long lastUpdate;
 unsigned long currentTime;
@@ -43,24 +41,21 @@ void setup()
   display.println("Starting...");
   display.display();
 
-  sensors.begin();
+  tempSensor.begin();
   delay(200);
 
   pinMode(LAMP, OUTPUT);
   pinMode(FAN, OUTPUT);
   pinMode(HEAT, OUTPUT);
 
-  Serial.println("");
   serverSetup();
-
-  server.begin();
 
   mode = "Zeitgeschaltet";
 
   display.println("HELLO :)");
   display.println(mode);
   display.display();
-
+  
   Serial.println("Setup finished at: ");
   printTime();
   delay(100);
@@ -75,23 +70,21 @@ void loop()
   currentTime = millis();
   
   // Optimisierung(?), update nur alle 500 ms
-  if (currentTime > lastUpdate + 500)
+  if (currentTime > lastUpdate + 2000)
   {
     lastUpdate = currentTime;
 
     // temp display
     if (mode != "Standby")
     {
-      sensors.requestTemperatures();
-  
       display.clearDisplay();
   
       display.setCursor(0, 0);
-      display.print("IN:  ");
-      display.print(sensors.getTempCByIndex(TEMP_INSIDE));
+      display.print("OUT: ");
+      display.print(tempSensor.readTemperature());
   
       display.setCursor(0, 20);
-      display.print("OUT: ");
+      display.print("IN: ");
       display.print(tempIn);
   
       display.display();
@@ -107,7 +100,6 @@ void loop()
     relay("lamp", lamp);
     relay("fan", fan);
     relay("heat", heat);
+    Serial.println("Update!");
   }
-
-  delay(50);
 }
