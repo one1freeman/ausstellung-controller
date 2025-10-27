@@ -23,12 +23,15 @@ void rtcSetup()
 void rtcLoop()
 {
   DateTime now = rtc.now();
-
   weekday = now.dayOfTheWeek();
   day = now.day();
   month = now.month();
   year = now.year();
   hour = now.hour();
+  if ((month >= 11 || month <= 2 ) || (month == 10 && day >= 25) || (month == 3 && day <=29)) //winterzeit, richtig bis märz 2027
+  {
+    hour--;
+  }
   minute = now.minute();
   second = now.second();
 }
