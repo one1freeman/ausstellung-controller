@@ -109,12 +109,6 @@ void serverLoop()
                     client.print(fanToday ? "Ventilator" : "Lampe");
                     client.println("</b></div>");
 
-                    client.print("<div>Aktueller Modus: <br><b>");
-                    client.print(mode);
-                    client.print("</b></div>");
-
-                    
-
                     client.print("<div>Lampe: ");
                     client.print(lamp ? "<on>An</b></on>" : "<off>Aus</off>");
                     client.print("<br>Ventilator: ");

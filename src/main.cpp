@@ -83,8 +83,8 @@ void loop()
     }
 
     statusControl();
-    digitalWrite(LAMP, lamp);
-    digitalWrite(FAN, fan);
-    digitalWrite(HEAT, heat);
+    digitalWrite(LAMP, lamp ? HIGH : LOW);
+    digitalWrite(FAN, fan ? HIGH : LOW);
+    digitalWrite(HEAT, heat ? HIGH : LOW);
   }
 }
