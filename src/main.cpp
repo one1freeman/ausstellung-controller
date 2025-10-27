@@ -1,5 +1,3 @@
-#include <SPI.h>
-#include <Wire.h>
 #include <OLED-Display-SOLDERED.h>
 #include <DHT.h>
 #include "pins.h"
@@ -11,19 +9,6 @@ DHT tempSensor(TEMPERATURE, DHT11);
 
 unsigned long lastUpdate;
 unsigned long currentTime;
-
-void relay (String modul, bool modus) {
-  if (modul.equals("lamp"))
-  {
-    digitalWrite(LAMP, modus);
-  } else if (modul.equals("fan"))
-  {
-    digitalWrite(FAN, modus);
-  } else if (modul.equals("heat"))
-  {
-    digitalWrite(HEAT, modus);
-  }
-}
 
 void setup()
 {
@@ -97,9 +82,9 @@ void loop()
       display.display();
     }
 
-    relay("lamp", lamp);
-    relay("fan", fan);
-    relay("heat", heat);
-    Serial.println("Update!");
+    statusControl();
+    digitalWrite(LAMP, lamp);
+    digitalWrite(FAN, fan);
+    digitalWrite(HEAT, heat);
   }
 }
