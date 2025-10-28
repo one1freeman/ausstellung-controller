@@ -23,32 +23,40 @@ void rtcSetup()
 void rtcLoop()
 {
   DateTime now = rtc.now();
-  weekday = now.dayOfTheWeek();
-  day = now.day();
-  month = now.month();
-  year = now.year();
-  hour = now.hour();
-  if ((month >= 11 || month <= 2 ) || (month == 10 && day >= 25) || (month == 3 && day <=29)) //winterzeit, richtig bis märz 2027
+  if (now.isValid())
   {
-    hour--;
-    if (hour == -1)
+    weekday = now.dayOfTheWeek();
+    day = now.day();
+    month = now.month();
+    year = now.year();
+    hour = now.hour();
+    if ((month <= 9 || month >= 4 ) || (month == 10 && day <= 26) || (month == 3 && day >=29)) //winterzeit, richtig bis märz 2027
     {
-      hour = 23;
+      hour++;
+      if (hour == 24)
+      {
+        hour = 0;
+      }
     }
+    minute = now.minute();
+    second = now.second();
+    delay(500);
   }
-  minute = now.minute();
-  second = now.second();
+  
 }
 
 void printTime()
 {
   rtcLoop();
+  Serial.print("Current Time:");
   Serial.print(hour < 10 ? "0" : "");
   Serial.print(hour);
   Serial.print(minute < 10 ? ":0" : ":");
   Serial.print(minute);
   Serial.print(second < 10 ? ":0" : ":");
   Serial.println(second);
+  
+  Serial.print("Current Date:");
   Serial.print(day);
   Serial.print(".");
   Serial.print(month);

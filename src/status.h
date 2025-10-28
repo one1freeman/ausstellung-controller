@@ -3,7 +3,7 @@
 String mode = "";
 
 bool fanToday, lamp, fan, heat, timer; // alle bools die sonstwo gebraucht werden
-float tempIn;
+String tempIn;
 
 void statusControl()
 {

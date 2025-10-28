@@ -51,8 +51,8 @@ void serverLoop()
                 }
                 else if (currentLine.endsWith("$POST"))
                 {
-                    String temperatureLine = currentLine.substring(0, currentLine.length() - 5); // cropping für die Daten vom Sensor-ESP: z.b. "27.5$POST" -> "27.5"
-                    tempIn = temperatureLine.toFloat();
+                    tempIn = currentLine.substring(0, currentLine.length() - 5); // cropping für die Daten vom Sensor-ESP: z.b. "27.5$POST" -> "27.5"
+                    break;
                 }
 
                 statusControl();
