@@ -11,7 +11,7 @@ void statusControl()
     // alle zwei Tage Windkraft, ansonsten Solar
     fanToday = weekday % 2 == 0;
     // alle zwei Tage Windkraft, ansonsten Solar
-    bool dayCorrect = weekday != 7 && weekday != 7; // nur Montag-Freitag
+    bool dayCorrect = weekday != 7 && weekday != 1; // nur Montag-Freitag
 
     bool timetable = ((hour == 9 && minute > 20 && minute < 45) || // nur zu den Pausen
                       (hour == 11 && minute > 5 && minute < 35)) &&

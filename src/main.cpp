@@ -57,7 +57,7 @@ void loop()
 
   currentTime = millis();
   
-  // Optimisierung(?), update nur alle 500 ms
+  // Optimisierung(?), update nur alle 2000 ms
   if (currentTime > lastUpdate + 2000)
   {
     lastUpdate = currentTime;
