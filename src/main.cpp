@@ -1,9 +1,12 @@
-#include <OLED-Display-SOLDERED.h>
+#include <U8g2lib.h>
+#include <Wire.h>
 #include <DHT.h>
 #include "pins.h"
 #include "webserver.h"
 
-OLED_Display display;
+U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/U8X8_PIN_NONE);
+u8g2_uint_t offset;
+u8g2_uint_t width;
 
 DHT tempSensor(TEMPERATURE, DHT11);
 
@@ -15,17 +18,21 @@ void setup()
   Serial.begin(9600);
   delay(200);
 
-  display.begin();
-
+  if (!display.begin())
+  {
+    Serial.println("Display not found!");
+  }
+  
+  display.clearBuffer();
+  display.setFont(u8g2_font_logisoso32_tf);
+  display.setFontMode(0);
+  display.firstPage();
+  display.drawUTF8(0, 0, "HELLO WORLD!");
+  delay(5000);
+  display.nextPage();
+  
   rtcSetup();
-
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0, 0);
-  display.println("Starting...");
-  display.display();
-
+  
   tempSensor.begin();
   delay(200);
 
@@ -36,10 +43,6 @@ void setup()
   serverSetup();
 
   mode = "Zeitgeschaltet";
-
-  display.println("HELLO :)");
-  display.println(mode);
-  display.display();
   
   Serial.println("Setup finished at: ");
   printTime();
@@ -62,24 +65,11 @@ void loop()
     // temp display
     if (mode != "Standby")
     {
-      display.clearDisplay();
-  
-      display.setCursor(0, 0);
-      display.print("OUT: ");
-      display.print(tempSensor.readTemperature());
-  
-      display.setCursor(0, 20);
-      display.print("IN: ");
-      display.print(tempIn);
-  
-      display.display();
+      
     }
     else
     {
-      display.clearDisplay();
-      display.setCursor(0, 0);
-      display.print("Standby");
-      display.display();
+      
     }
 
     statusControl();

@@ -1,7 +1,7 @@
 #define TEMPERATURE 4
-#define LAMP 25
-#define FAN 26
-#define HEAT 27
+#define LAMP 17
+#define FAN 18
+#define HEAT 19
 
 // IDs
 #define TEMP_INSIDE 0

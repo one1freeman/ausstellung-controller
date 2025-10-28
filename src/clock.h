@@ -31,6 +31,10 @@ void rtcLoop()
   if ((month >= 11 || month <= 2 ) || (month == 10 && day >= 25) || (month == 3 && day <=29)) //winterzeit, richtig bis märz 2027
   {
     hour--;
+    if (hour == -1)
+    {
+      hour = 23;
+    }
   }
   minute = now.minute();
   second = now.second();
