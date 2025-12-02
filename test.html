@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            background-color: lightgray;
+            font-family: sans-serif;
+            text-align: center;
+        }
+        div {
+            font-size: 160%;
+            background-color: white;
+            margin-top: 15px;
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+        button {
+            background-color:white;
+            font-size: 160%;
+            border: 0px;
+            border-radius: 7px;
+            padding: 20px;
+            margin: 5px;
+            box-shadow: 5px 5px 0px 0px rgb(0, 0, 0, 0.1);
+        } button:hover {
+            box-shadow: 5px 5px 0px 0px rgb(0, 0, 0, 0.5);
+        }
+        button:active {
+            background-color: rgb(159, 159, 159);
+        }
+        table {
+            font-size: 160%;
+            background-color: rgb(235, 235, 235);
+            margin-top: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+            
+            border-spacing: 30px 0px;
+        }
+        on {
+            font-weight: bold;
+            color:green;
+        }
+        off {
+            font-weight: bold;
+            color:red;
+        }
+    </style>
+</head>
+<html>
+    <h1>Physikausstellung<br><b>Dashboard</b></h1>
+    <button>Zeitgeschaltet</button>
+    <button><b>An</b></button>
+    <button>Standby</button><br>
+    <div>23:12:31<br>25.10.2025
+    <br>Heute: <b>Ventilator</b></div>
+
+    <div>Lampe: <on><b>An</b></on><br>
+    Ventilator: <off><b>Aus</b></off></br>
+    Wärmepumpe: <on><b>An</b><on></div>
+    <table>
+        <tr>
+            <th>Ventilator/Lampe</th>
+            <th>Wärmepumpe</th>
+        </tr>
+        <tr>
+            <th>09:20 - 09:25<br>11:05 - 11:35</th>
+            <th>08:55 - 09:26<br>10:40 - 11:31</th>
+        </tr>
+    </table>
+</html>

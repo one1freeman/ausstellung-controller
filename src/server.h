@@ -1,3 +1,6 @@
+#ifndef SERVER_H
+#define SERVER_H
+
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
@@ -6,6 +9,96 @@
 #include "status.h"
 
 WebServer server(80);
+
+void mainPage()
+{
+    // server.send(200, "text/plain", "Hello from ESP32!");
+    char temp[2000];
+    snprintf(temp, 2000,
+        "<!DOCTYPE html>\
+<head>\
+    <title>Dashboard</title>\
+    <style>\
+        body {\
+            background-color: lightgray;\
+            font-family: sans-serif;\
+            text-align: center;\
+        }\
+        div {\
+            font-size: 160%;\
+            background-color: white;\
+            margin-top: 15px;\
+            margin-left: 5%;\
+            margin-right: 5%;\
+        }\
+        button {\
+            background-color:white;\
+            font-size: 160%;\
+            border: 0px;\
+            border-radius: 7px;\
+            padding: 20px;\
+            margin: 5px;\
+            box-shadow: 5px 5px 0px 0px rgb(0, 0, 0, 0.1);\
+        } button:hover {\
+            box-shadow: 5px 5px 0px 0px rgb(0, 0, 0, 0.5);\
+        }\
+        button:active {\
+            background-color: rgb(159, 159, 159);\
+        }\
+        table {\
+            font-size: 160%;\
+            background-color: rgb(235, 235, 235);\
+            margin-top: 15px;\
+            margin-left: auto;\
+            margin-right: auto;\
+            padding: 20px;\
+            \
+            border-spacing: 30px 0px;\
+        }\
+        on {\
+            font-weight: bold;\
+            color:green;\
+        }\
+        off {\
+            font-weight: bold;\
+            color:red;\
+        }\
+    </style>\
+</head>\
+<html>\
+    <h1>Physikausstellung<br><b>Dashboard</b></h1>\
+    <a href=\"/zeit\"><button>%s</button></a>\
+    <a href=\"/an\"><button>%s</button></a>\
+    <a href=\"/standby\"><button>%s</button></a>\
+    <div>%02d:%02d:%02d<br>%02d.%02d.%04d\
+    <br>Heute: <b>%s</b></div>\
+    <div>Lampe: <on>%s</on><br>\
+    Ventilator: <off>%s</off></br>\
+    Wärmepumpe: <on>%s<on></div>\
+    <table>\
+        <tr>\
+            <th>Ventilator/Lampe</th>\
+            <th>Wärmepumpe</th>\
+        </tr>\
+        <tr>\
+            <th>09:20 - 09:25<br>11:05 - 11:35</th>\
+            <th>08:55 - 09:26<br>10:40 - 11:31</th>\
+        </tr>\
+    </table>\
+</html>",
+    mode == 2 ? "<b>Zeitgeschaltet</b>" : "Zeitgeschaltet",
+    mode == 1 ? "<b>An</b>" : "An",
+    mode == 0 ? "<b>Standby</b>" : "Standby",
+    hour, minute, second,
+    day, month, year,
+    fanToday ? "Ventilator" : "Lampe",
+    lamp ? "<on>An</b></on>" : "<off>Aus</off>",
+    fan ? "<on>An</on>" : "<off>Aus</off>",
+    heat ? "<on>An</on>" : "<off>Aus</off>");
+    //support utf -8 
+    server.sendHeader("Content-Type", "text/html; charset=utf-8");
+    server.send(200, "text/html", temp);
+}
 
 void serverSetup()
 {
@@ -21,18 +114,46 @@ void serverSetup()
     server.on("/", []() {
         mainPage();
     });
+    server.on("/zeit", []() {
+        mode = 2;
+        statusControl();
+        mainPage();
+    });
+    server.on("/an", []() {
+        mode = 1;
+        statusControl();
+        mainPage();
+    });
+    server.on("/standby", []() {
+        mode = 0;
+        statusControl();
+        mainPage();
+    });
+    // handle post requests from sensor esp
+    server.on("/temp", HTTP_POST, []() {
+        if (server.hasArg("plain") == false) {
+            // No body found
+            Serial.println("No body received");
+            server.send(400, "text/plain", "Body not found");
+            return;
+        }
+        tempIn = server.arg("plain");
+        // Remove possible trailing newline characters
+        tempIn.trim();
+        //keep only first two characters
+        tempIn = tempIn.substring(0, 2);
+        Serial.print("Received temperature: ");
+        Serial.println(tempIn);
+        server.send(200, "text/plain", "Temperature received");
+    });
     server.onNotFound([]() {
         mainPage();
     });
     if (MDNS.begin("admin")) {
-        Serial.println("MDNS responder started as a 'admin'");
+        Serial.println("MDNS responder started as 'admin'");
     }
 }
 
-void mainPage()
-{
-    server.send(200, "text/plain", "Hello from ESP32!");
-}
 
 void serverLoop()
 {
@@ -165,3 +286,4 @@ void serverLoop()
 //         printTime();
 //     }
 // }
+#endif

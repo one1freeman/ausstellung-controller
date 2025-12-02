@@ -2,7 +2,7 @@
 #include <Wire.h>
 #include <DHT.h>
 #include "pins.h"
-#include "webserver.h"
+#include "server.h"
 
 U8G2_SH1106_128X64_NONAME_F_HW_I2C display(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
@@ -35,7 +35,7 @@ void setup()
 
   serverSetup();
 
-  mode = "Zeitgeschaltet";
+  mode = 2; // Standardmäßig Zeitgeschaltet
   
   Serial.println("Setup finished at: ");
   printTime();
@@ -56,16 +56,19 @@ void loop()
     lastUpdate = currentTime;
 
     // temp display
-    if (mode != "Standby")
+    if (mode != 0)
     {
       char temp[5];
       dtostrf(tempSensor.readTemperature(), 5, 2, temp);
-      printTime();
       display.clearBuffer();
-      display.drawStr(0, 30, "IN:");
-      display.drawStr(50, 30, tempIn.c_str());
-      display.drawStr(0, 54, "OUT:");
-      display.drawStr(50, 54, String(tempSensor.readTemperature()).c_str());
+      display.drawStr(0, 30, "INNEN:");
+      display.drawStr(75, 30, tempIn.c_str());
+      display.drawStr(110, 30, "C");
+      
+      display.drawStr(0, 54, "AUSSEN:");
+      display.drawStr(75, 54, String((int)tempSensor.readTemperature()).c_str());
+      display.drawStr(110, 54, "C");
+
       display.sendBuffer();
       delay(500);
     }
