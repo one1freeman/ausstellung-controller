@@ -1,3 +1,6 @@
+#ifndef RTC_H
+#define RTC_H
+
 #include <RTClib.h>
 
 RTC_DS3231 rtc;
@@ -30,7 +33,7 @@ void rtcLoop()
     month = now.month();
     year = now.year();
     hour = now.hour();
-    if ((month <= 9 || month >= 4 ) || (month == 10 && day <= 26) || (month == 3 && day >=29)) //winterzeit, richtig bis märz 2027
+    if ((month <= 9 && month >= 4 ) || (month == 10 && day <= 26) || (month == 3 && day >=29)) //sommerzeit, richtig bis märz 2027 lololol
     {
       hour++;
       if (hour == 24)
@@ -42,7 +45,6 @@ void rtcLoop()
     second = now.second();
     delay(500);
   }
-  
 }
 
 void printTime()
@@ -63,3 +65,4 @@ void printTime()
   Serial.print(".");
   Serial.println(year);
 }
+#endif
