@@ -13,8 +13,8 @@ WebServer server(80);
 void mainPage()
 {
     // server.send(200, "text/plain", "Hello from ESP32!");
-    char temp[2000];
-    snprintf(temp, 2000,
+    char temp[2900];
+    snprintf(temp, 2900,
         "<!DOCTYPE html>\
 <head>\
     <title>Dashboard</title>\
@@ -72,9 +72,16 @@ void mainPage()
     <a href=\"/standby\"><button>%s</button></a>\
     <div>%02d:%02d:%02d<br>%02d.%02d.%04d\
     <br>Heute: <b>%s</b></div>\
+    <div>Modus: <b>%s</b></div>\
     <div>Lampe: <on>%s</on><br>\
     Ventilator: <off>%s</off></br>\
     Wärmepumpe: <on>%s<on></div>\
+    <div>\
+        Einzelsteuerung (schaltet automatisch auf Manuell):<br>\
+        Lampe: <a href=\"/lampe/an\"><button>An</button></a><a href=\"/lampe/aus\"><button>Aus</button></a><br>\
+        Lüfter: <a href=\"/luefter/an\"><button>An</button></a><a href=\"/luefter/aus\"><button>Aus</button></a><br>\
+        Wärmepumpe: <a href=\"/waermepumpe/an\"><button>An</button></a><a href=\"/waermepumpe/aus\"><button>Aus</button></a>\
+    </div>\
     <table>\
         <tr>\
             <th>Ventilator/Lampe</th>\
@@ -92,6 +99,7 @@ void mainPage()
     hour, minute, second,
     day, month, year,
     fanToday ? "Ventilator" : "Lampe",
+    mode == 0 ? "Standby" : mode == 1 ? "An" : mode == 2 ? "Zeitgeschaltet" : "Manuell",
     lamp ? "<on>An</b></on>" : "<off>Aus</off>",
     fan ? "<on>An</on>" : "<off>Aus</off>",
     heat ? "<on>An</on>" : "<off>Aus</off>");
@@ -127,6 +135,38 @@ void serverSetup()
     server.on("/standby", []() {
         mode = 0;
         statusControl();
+        mainPage();
+    });
+    // Einzelsteuerung: schaltet automatisch in den manuellen Modus (3),
+    // damit statusControl() die Handschaltung nicht überschreibt.
+    server.on("/lampe/an", []() {
+        mode = 3;
+        lamp = true;
+        mainPage();
+    });
+    server.on("/lampe/aus", []() {
+        mode = 3;
+        lamp = false;
+        mainPage();
+    });
+    server.on("/luefter/an", []() {
+        mode = 3;
+        fan = true;
+        mainPage();
+    });
+    server.on("/luefter/aus", []() {
+        mode = 3;
+        fan = false;
+        mainPage();
+    });
+    server.on("/waermepumpe/an", []() {
+        mode = 3;
+        heat = true;
+        mainPage();
+    });
+    server.on("/waermepumpe/aus", []() {
+        mode = 3;
+        heat = false;
         mainPage();
     });
     // handle post requests from sensor esp

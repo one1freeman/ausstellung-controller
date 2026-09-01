@@ -1,12 +1,19 @@
 #include "clock.h"
 //refactor, so that mode is an int for the three possible values (off, on, timer)
-int mode = 0; // 0 = Aus, 1 = An, 2 = Zeitgeschaltet
+int mode = 0; // 0 = Aus, 1 = An, 2 = Zeitgeschaltet, 3 = Manuell (Einzelsteuerung)
 
 bool fanToday, lamp, fan, heat, timer; // alle bools die sonstwo gebraucht werden
 String tempIn;
 
 void statusControl()
 {
+    // Im manuellen Modus werden lamp/fan/heat direkt über die Einzel-Buttons
+    // gesetzt (server.h) und hier nicht überschrieben.
+    if (mode == 3)
+    {
+        return;
+    }
+
     // Timetable Check, ziemlich hässlich
     // alle zwei Tage Windkraft, ansonsten Solar
     fanToday = weekday % 2 == 0;
