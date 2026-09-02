@@ -70,9 +70,11 @@ void mainPage()
     <a href=\"/zeit\"><button>%s</button></a>\
     <a href=\"/an\"><button>%s</button></a>\
     <a href=\"/standby\"><button>%s</button></a>\
+    <a href=\"/temperatur\"><button>%s</button></a>\
     <div>%02d:%02d:%02d<br>%02d.%02d.%04d\
     <br>Heute: <b>%s</b></div>\
     <div>Modus: <b>%s</b></div>\
+    <div>Innentemperatur: %s °C (Ziel Modus 4: %.0f°C ±%.0f, Mo-Fr 8-15 Uhr)</div>\
     <div>Lampe: <on>%s</on><br>\
     Ventilator: <off>%s</off></br>\
     Wärmepumpe: <on>%s<on></div>\
@@ -96,10 +98,13 @@ void mainPage()
     mode == 2 ? "<b>Zeitgeschaltet</b>" : "Zeitgeschaltet",
     mode == 1 ? "<b>An</b>" : "An",
     mode == 0 ? "<b>Standby</b>" : "Standby",
+    mode == 4 ? "<b>Temp. 30°C</b>" : "Temp. 30°C",
     hour, minute, second,
     day, month, year,
     fanToday ? "Ventilator" : "Lampe",
-    mode == 0 ? "Standby" : mode == 1 ? "An" : mode == 2 ? "Zeitgeschaltet" : "Manuell",
+    mode == 0 ? "Standby" : mode == 1 ? "An" : mode == 2 ? "Zeitgeschaltet" : mode == 3 ? "Manuell" : "Temperaturhaltung",
+    tempIn.length() ? tempIn.c_str() : "?",
+    ZIEL_TEMP, HYSTERESE,
     lamp ? "<on>An</b></on>" : "<off>Aus</off>",
     fan ? "<on>An</on>" : "<off>Aus</off>",
     heat ? "<on>An</on>" : "<off>Aus</off>");
@@ -134,6 +139,11 @@ void serverSetup()
     });
     server.on("/standby", []() {
         mode = 0;
+        statusControl();
+        mainPage();
+    });
+    server.on("/temperatur", []() {
+        mode = 4;
         statusControl();
         mainPage();
     });
